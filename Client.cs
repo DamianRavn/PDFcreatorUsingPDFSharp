@@ -48,6 +48,13 @@ namespace PDFCreator
 
                 ServerSend.Welcome(id, "Welcome to the server!");
             }
+            public void Disconnect()
+            {
+                stream.Close();
+                socket.Close();
+                stream = null;
+                socket = null;
+            }
 
             public void SendData(Packet _packet)
             {

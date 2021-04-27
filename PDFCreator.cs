@@ -5,7 +5,11 @@ using System.Collections.Generic;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing.Layout;
+using System.IO;
+using System.Text.RegularExpressions;
 
+
+//TODO: Text allignment, text boldness
 namespace PDFCreator
 {
     class PDFCreator
@@ -46,15 +50,6 @@ namespace PDFCreator
                 }
             }
         }
-
-        private static void Test()
-        {
-            string testName = "test2";
-            pdfCreator.CreateDocument(testName, 2, 9100, 9750);
-            pdfCreator.DrawImage(testName,"E:/Libraries/Documents/GitHub/DamianRavn_CV_/DamianRavn_CV_/Assets/Images/Circle.png", 0, 1, 1, 500, 500, 500, 500);
-            //pdfCreator.DrawString(testName, "halø meæ då", 1, "LiberationSans SDF", 0, 0, 60, 400, 400, 50, 50);
-            pdfCreator.SaveDocument(testName);
-        }
     }
 
     class PDFSharpCreation
@@ -76,10 +71,22 @@ namespace PDFCreator
                 documentClass.graphicsList.Add(XGraphics.FromPdfPage(page));
             }
 
-            documents.Add(name, documentClass);
+            if (!documents.ContainsKey(name))
+            {
+                documents.Add(name, documentClass);
+            }
+            else
+            {
+                documents[name] = documentClass;
+            }
         }
 
-        public void DrawString(string name, string RTFtext, int page, string fontFamily, float fontSize, float pivotX, float pivotY, float sizeX, float sizeY, float posX, float posY)
+        public void Reset()
+        {
+            documents.Clear();
+        }
+
+        public void DrawString(string name, string RTFtext, int page, string fontFamily, float fontSize, int alignment, float pivotX, float pivotY, float sizeX, float sizeY, float posX, float posY)
         {
             //XPdfFontOptions options = new XPdfFontOptions(PdfFontEncoding.Unicode);
 
@@ -89,6 +96,7 @@ namespace PDFCreator
             XFont font = new XFont(fontFamily, fontSize, XFontStyle.Regular);
             XRect rect = new XRect(x, y, sizeX, sizeY);
             XTextFormatter xTextFormatter = new XTextFormatter(documents[name].graphicsList[page]);
+            xTextFormatter.Alignment = (XParagraphAlignment)alignment;
             xTextFormatter.DrawString(RTFtext, font, XBrushes.Black,
                   rect,
                   XStringFormats.TopLeft);
@@ -109,9 +117,14 @@ namespace PDFCreator
             documents[name].graphicsList[page].DrawImage(image, x, y, newWidth, newHeight);
         }
 
-        public void SaveDocument(string name)
+        public void SaveDocument(string path, string name)
         {
-            documents[name].document.Save($"E:/Libraries/Desktop/{name}.pdf");
+            string fullpath = $"{path}/{name}.pdf";
+
+             documents[name].document.Save(fullpath);
+             Console.WriteLine($"Document saved to {fullpath}");
+                
+             //Console.WriteLine($"Couldnt save document {fullpath}");
         }
 
         private float SetToPivot(float pos, float size, float pivot)

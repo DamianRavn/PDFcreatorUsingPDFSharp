@@ -16,9 +16,9 @@ namespace PDFCreator
         welcomeReceived = 1,
         image = 2,
         RTFText = 3,
-        hyperlink = 4,
         makeDocument = 5,
-        saveDocument = 6
+        saveDocument = 6,
+        disconnect = 7
     }
 
     public class Packet : IDisposable
@@ -160,7 +160,7 @@ namespace PDFCreator
         public void Write(string _value)
         {
             Write(_value.Length); // Add the length of the string to the packet
-            buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+            buffer.AddRange(Encoding.UTF8.GetBytes(_value)); // Add the string itself
         }
         #endregion
 
@@ -320,12 +320,14 @@ namespace PDFCreator
             try
             {
                 int _length = ReadInt(); // Get the length of the string
-                string _value = Encoding.ASCII.GetString(readableBuffer, readPos, _length); // Convert the bytes to a string
-                if (_moveReadPos && _value.Length > 0)
-                {
-                    // If _moveReadPos is true string is not empty
-                    readPos += _length; // Increase readPos by the length of the string
-                }
+                string _value = Encoding.UTF8.GetString(ReadBytes(_length));
+
+                //string _value = Encoding.UTF8.GetString(readableBuffer, readPos, _length); // Convert the bytes to a string
+                //if (_moveReadPos && _value.Length > 0)
+                //{
+                //    // If _moveReadPos is true string is not empty
+                //    readPos += _length; // Increase readPos by the length of the string
+                //}
                 return _value; // Return the string
             }
             catch

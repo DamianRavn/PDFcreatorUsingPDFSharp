@@ -49,6 +49,11 @@ namespace PDFCreator
             Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: Server full!");
         }
 
+        public static void DisconnectClient(int client)
+        {
+            clients[client].tcp.Disconnect();
+        }
+
         private static void InitializeServerData()
         {
             for (int i = 1; i <= MaxPlayers; i++)
@@ -60,10 +65,10 @@ namespace PDFCreator
             {
                 { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                 { (int)ClientPackets.image, ServerHandle.ImageReceived },
-                { (int)ClientPackets.RTFText, ServerHandle.UTF8RTFTextReceived },
+                { (int)ClientPackets.RTFText, ServerHandle.RTFTextReceived },
                 { (int)ClientPackets.makeDocument, ServerHandle.MakeNewDocument },
-                { (int)ClientPackets.hyperlink, ServerHandle.HyperlinkReceived },
-                { (int)ClientPackets.saveDocument, ServerHandle.SaveDocument }
+                { (int)ClientPackets.saveDocument, ServerHandle.SaveDocument },
+                { (int)ClientPackets.disconnect, ServerHandle.Disconnect }
             };
             Console.WriteLine("Initialized packets.");
         }

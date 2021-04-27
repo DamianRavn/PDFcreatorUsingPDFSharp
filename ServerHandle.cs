@@ -45,14 +45,14 @@ namespace PDFCreator
             Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
-        public static void UTF8RTFTextReceived(int _fromClient, Packet _packet)
+        public static void RTFTextReceived(int _fromClient, Packet _packet)
         {
             string documentName = _packet.ReadString();
-            int textLength = _packet.ReadInt();
-            string RTFtext = Encoding.UTF8.GetString(_packet.ReadBytes(textLength));
+            string RTFtext = _packet.ReadString();
             int pageNR = _packet.ReadInt();
             string fontFamily = _packet.ReadString();
             float fontSize = _packet.ReadFloat();
+            int alignment = _packet.ReadInt(); //Has to align with XParagraphAlignment
             float pivotX = _packet.ReadFloat();
             float pivotY = _packet.ReadFloat();
             float sizeX = _packet.ReadFloat();
@@ -60,19 +60,22 @@ namespace PDFCreator
             float posX = _packet.ReadFloat();
             float posY = _packet.ReadFloat();
 
-            PDFCreator.pdfCreator.DrawString(documentName, RTFtext, pageNR, fontFamily, fontSize, pivotX, pivotY, sizeX, sizeY, posX, posY);
+            PDFCreator.pdfCreator.DrawString(documentName, RTFtext, pageNR, fontFamily, fontSize, alignment, pivotX, pivotY, sizeX, sizeY, posX, posY);
             Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
-        }
-
-        public static void HyperlinkReceived(int _fromClient, Packet _packet)
-        {
         }
 
         public static void SaveDocument(int _fromClient, Packet _packet)
         {
+            string path = _packet.ReadString();
             string name = _packet.ReadString();
-            PDFCreator.pdfCreator.SaveDocument(name);
-            Console.WriteLine("Document saved!");
+            PDFCreator.pdfCreator.SaveDocument(path, name);
+        }
+
+        public static void Disconnect(int _fromClient, Packet _packet)
+        {
+            PDFCreator.pdfCreator.Reset();
+            Server.DisconnectClient(_fromClient);
+            Console.WriteLine($"Client {_fromClient} Disconnected");
         }
     }
 }
