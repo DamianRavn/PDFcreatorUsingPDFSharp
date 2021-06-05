@@ -95,7 +95,7 @@ namespace PDFCreator
 
             XFont font = new XFont(fontFamily, fontSize, XFontStyle.Regular);
             XRect rect = new XRect(x, y, sizeX, sizeY);
-            XTextFormatter xTextFormatter = new XTextFormatter(documents[name].graphicsList[page]);
+            XTextFormatter xTextFormatter = new XTextFormatter(documents[name].graphicsList[page]); //The textformatter makes sure the text stays in the rect
             xTextFormatter.Alignment = (XParagraphAlignment)alignment;
             xTextFormatter.DrawString(RTFtext, font, XBrushes.Black,
                   rect,
@@ -112,7 +112,7 @@ namespace PDFCreator
             var ratio = Math.Min(ratioX, ratioY);
 
             var newWidth = (int)(image.PixelWidth * ratio);
-            var newHeight = (int)(image.PixelHeight * ratio);
+            var newHeight = (int)(image.PixelHeight * ratio); //Preserves the aspect ratio
 
             documents[name].graphicsList[page].DrawImage(image, x, y, newWidth, newHeight);
         }
@@ -123,8 +123,6 @@ namespace PDFCreator
 
              documents[name].document.Save(fullpath);
              Console.WriteLine($"Document saved to {fullpath}");
-                
-             //Console.WriteLine($"Couldnt save document {fullpath}");
         }
 
         private float SetToPivot(float pos, float size, float pivot)
