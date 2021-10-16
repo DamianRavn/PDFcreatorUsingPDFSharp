@@ -41,18 +41,22 @@ namespace PDFCreator
             float posX = _packet.ReadFloat();
             float posY = _packet.ReadFloat();
 
+            Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
             PDFCreator.pdfCreator.DrawImage(documentName, path, pageNR, pivotX, pivotY, sizeX, sizeY, posX, posY);
             Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
-        public static void RTFTextReceived(int _fromClient, Packet _packet)
+        public static void RTFTextWithTagsReceived(int _fromClient, Packet _packet)
         {
             string documentName = _packet.ReadString();
             string RTFtext = _packet.ReadString();
             int pageNR = _packet.ReadInt();
             string fontFamily = _packet.ReadString();
             float fontSize = _packet.ReadFloat();
+            int fontStyle = _packet.ReadInt(); //Has to align with XFontStyle
             int alignment = _packet.ReadInt(); //Has to align with XParagraphAlignment
+            float lineSpace = _packet.ReadFloat();
+            float paragraphSpace = _packet.ReadFloat();
             float pivotX = _packet.ReadFloat();
             float pivotY = _packet.ReadFloat();
             float sizeX = _packet.ReadFloat();
@@ -60,7 +64,7 @@ namespace PDFCreator
             float posX = _packet.ReadFloat();
             float posY = _packet.ReadFloat();
 
-            PDFCreator.pdfCreator.DrawString(documentName, RTFtext, pageNR, fontFamily, fontSize, alignment, pivotX, pivotY, sizeX, sizeY, posX, posY);
+            PDFCreator.pdfCreator.DrawRTFTagString(documentName, RTFtext, pageNR, fontFamily, fontSize, fontStyle, alignment, lineSpace, paragraphSpace, pivotX, pivotY, sizeX, sizeY, posX, posY);
             Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 

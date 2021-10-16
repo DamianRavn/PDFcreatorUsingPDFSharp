@@ -65,7 +65,7 @@ namespace PDFCreator
             {
                 { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                 { (int)ClientPackets.image, ServerHandle.ImageReceived },
-                { (int)ClientPackets.RTFText, ServerHandle.RTFTextReceived },
+                { (int)ClientPackets.RTFTextWithTags, ServerHandle.RTFTextWithTagsReceived },
                 { (int)ClientPackets.makeDocument, ServerHandle.MakeNewDocument },
                 { (int)ClientPackets.saveDocument, ServerHandle.SaveDocument },
                 { (int)ClientPackets.disconnect, ServerHandle.Disconnect }

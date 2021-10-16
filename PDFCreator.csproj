@@ -45,6 +45,7 @@
     <Compile Include="GameLogic.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="PDFCreator.cs" />
+    <Compile Include="RichTextFormatter.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="ServerHandle.cs" />
     <Compile Include="ServerSend.cs" />

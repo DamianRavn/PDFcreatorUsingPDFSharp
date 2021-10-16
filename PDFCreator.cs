@@ -7,6 +7,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing.Layout;
 using System.IO;
 using System.Text.RegularExpressions;
+using PdfSharp;
 
 
 //TODO: Text allignment, text boldness
@@ -22,12 +23,13 @@ namespace PDFCreator
             Console.Title = "Game Server";
             isRunning = true;
             pdfCreator = new PDFSharpCreation();
-            //Test();
-
+            pdfCreator.CreateDocument("e", 1, 0, 0);
+            string test = "Hello. This is <b > bold aight </b>\n This is <i> Italiccc!</i> \r\n Yep, that's just < how it is.>";
+            pdfCreator.DrawRTFTagString("e", test, 0, "Calibri", 16, 1, 1, 10, 10, 0, 0, 0.2f, 0.2f, 0.2f, 0.2f);
             Thread mainThread = new Thread(new ThreadStart(MainThread));
             mainThread.Start();
 
-            Server.Start(1, 26950);
+            Server.Start(1, 5050);
         }
 
         private static void MainThread()
@@ -55,7 +57,7 @@ namespace PDFCreator
     class PDFSharpCreation
     {
         Dictionary<string, PDFHolder> documents = new Dictionary<string, PDFHolder>();
-
+        RichTextFormatter textFormatter; //Easier to cache
 
         public void CreateDocument(string name, int pageAmount, float width, float height)
         {
@@ -65,20 +67,13 @@ namespace PDFCreator
             for (int i = 0; i < pageAmount; i++)
             {
                 PdfPage page = documentClass.document.AddPage();
-                page.Width = width;
-                page.Height = height;
+                page.Size = PageSize.A4;
 
                 documentClass.graphicsList.Add(XGraphics.FromPdfPage(page));
             }
 
-            if (!documents.ContainsKey(name))
-            {
-                documents.Add(name, documentClass);
-            }
-            else
-            {
-                documents[name] = documentClass;
-            }
+            textFormatter = new RichTextFormatter();
+            documents[name] = documentClass;
         }
 
         public void Reset()
@@ -86,23 +81,35 @@ namespace PDFCreator
             documents.Clear();
         }
 
-        public void DrawString(string name, string RTFtext, int page, string fontFamily, float fontSize, int alignment, float pivotX, float pivotY, float sizeX, float sizeY, float posX, float posY)
+        public void DrawRTFTagString(string name, string RTFtext, int page, string fontFamily, float fontSize, int fontStyle, int alignment, float lineSpace, float paragraphSpace, float pivotX, float pivotY, float percentageSizeX, float percentageSizeY, float percentagePosX, float percentagePosY)
         {
             //XPdfFontOptions options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-
+            XSize pageSize = documents[name].graphicsList[page].PageSize;
+            float posX = percentagePosX * (float)pageSize.Width;
+            float posY = percentagePosY * (float)pageSize.Height;
+            float sizeX = percentageSizeX * (float)pageSize.Width;
+            float sizeY = percentageSizeY * (float)pageSize.Height;
+            
             float x = SetToPivot(posX, sizeX, pivotX);
             float y = SetToPivot(posY, sizeY, pivotY);
 
-            XFont font = new XFont(fontFamily, fontSize, XFontStyle.Regular);
+            XFont font = new XFont(fontFamily, fontSize, (XFontStyle)fontStyle);
             XRect rect = new XRect(x, y, sizeX, sizeY);
-            XTextFormatter xTextFormatter = new XTextFormatter(documents[name].graphicsList[page]); //The textformatter makes sure the text stays in the rect
-            xTextFormatter.Alignment = (XParagraphAlignment)alignment;
-            xTextFormatter.DrawString(RTFtext, font, XBrushes.Black,
+            TextSpacingOptions spacingoptions = new TextSpacingOptions(paragraphSpace, lineSpace, 0f, 0f);
+            textFormatter.Font = font; //The textformatter makes sure the text stays in the rect
+            textFormatter.DrawString(RTFtext, documents[name].graphicsList[page], XBrushes.Black,
                   rect,
+                  (XParagraphAlignment)alignment,
+                  spacingoptions,
                   XStringFormats.TopLeft);
         }
-        public void DrawImage(string name, string path, int page, float pivotX, float pivotY, float sizeX, float sizeY, float posX, float posY)
+        public void DrawImage(string name, string path, int page, float pivotX, float pivotY, float percentageSizeX, float percentageSizeY, float percentagePosX, float percentagePosY)
         {
+            XSize pageSize = documents[name].graphicsList[page].PageSize;
+            float posX = percentagePosX * (float)pageSize.Width;
+            float posY = percentagePosY * (float)pageSize.Height;
+            float sizeX = percentageSizeX * (float)pageSize.Width;
+            float sizeY = percentageSizeY * (float)pageSize.Height;
             float x = SetToPivot(posX, sizeX, pivotX);
             float y = SetToPivot(posY, sizeY, pivotY);
             XImage image = XImage.FromFile(path);
@@ -111,18 +118,28 @@ namespace PDFCreator
             var ratioY = (double)sizeY / image.PixelHeight;
             var ratio = Math.Min(ratioX, ratioY);
 
-            var newWidth = (int)(image.PixelWidth * ratio);
-            var newHeight = (int)(image.PixelHeight * ratio); //Preserves the aspect ratio
-
-            documents[name].graphicsList[page].DrawImage(image, x, y, newWidth, newHeight);
+            var newWidth = image.PixelWidth * ratio;
+            var newHeight = image.PixelHeight * ratio; //Preserves the aspect ratio
+            var newX = x + (sizeX - newWidth)/2;
+            var newY = y + (sizeY - newHeight)/2; //Have to adjust because making it smaller fucks with pos
+            
+            documents[name].graphicsList[page].DrawImage(image, newX, newY, newWidth, newHeight);
         }
 
         public void SaveDocument(string path, string name)
         {
             string fullpath = $"{path}/{name}.pdf";
 
-             documents[name].document.Save(fullpath);
-             Console.WriteLine($"Document saved to {fullpath}");
+            try
+            {
+                documents[name].document.Save(fullpath);
+                Console.WriteLine($"Document saved to {fullpath}");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"Could not save: {exception}");
+            }
+             
         }
 
         private float SetToPivot(float pos, float size, float pivot)

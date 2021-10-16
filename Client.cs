@@ -75,18 +75,21 @@ namespace PDFCreator
             {
                 try
                 {
-                    int _byteLength = stream.EndRead(_result);
-                    if (_byteLength <= 0)
+                    if (stream != null)
                     {
-                        // TODO: disconnect
-                        return;
+                        int _byteLength = stream.EndRead(_result);
+                        if (_byteLength <= 0)
+                        {
+                            // TODO: disconnect
+                            return;
+                        }
+
+                        byte[] _data = new byte[_byteLength];
+                        Array.Copy(receiveBuffer, _data, _byteLength);
+
+                        receivedData.Reset(HandleData(_data));
+                        stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
                     }
-
-                    byte[] _data = new byte[_byteLength];
-                    Array.Copy(receiveBuffer, _data, _byteLength);
-
-                    receivedData.Reset(HandleData(_data));
-                    stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
                 }
                 catch (Exception _ex)
                 {

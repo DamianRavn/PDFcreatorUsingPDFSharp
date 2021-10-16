@@ -15,7 +15,7 @@ namespace PDFCreator
     {
         welcomeReceived = 1,
         image = 2,
-        RTFText = 3,
+        RTFTextWithTags = 3,
         makeDocument = 5,
         saveDocument = 6,
         disconnect = 7
