@@ -23,9 +23,9 @@ namespace PDFCreator
             Console.Title = "Game Server";
             isRunning = true;
             pdfCreator = new PDFSharpCreation();
-            pdfCreator.CreateDocument("e", 1, 0, 0);
-            string test = "Hello. This is <b > bold aight </b>\n This is <i> Italiccc!</i> \r\n Yep, that's just < how it is.>";
-            pdfCreator.DrawRTFTagString("e", test, 0, "Calibri", 16, 1, 1, 10, 10, 0, 0, 0.2f, 0.2f, 0.2f, 0.2f);
+            //pdfCreator.CreateDocument("e", 1, 0, 0);
+            //string test = "Hello. This is <b > bold aight </b>\n This is <i> Italiccc!</i> \r\n Yep, that's just < how it is.>";
+            //pdfCreator.DrawRTFTagString("e", test, 0, "Calibri", 16, 1, 1, 10, 10, 0, 0, 0.2f, 0.2f, 0.2f, 0.2f);
             Thread mainThread = new Thread(new ThreadStart(MainThread));
             mainThread.Start();
 
@@ -59,7 +59,7 @@ namespace PDFCreator
         Dictionary<string, PDFHolder> documents = new Dictionary<string, PDFHolder>();
         RichTextFormatter textFormatter; //Easier to cache
 
-        public void CreateDocument(string name, int pageAmount, float width, float height)
+        public void CreateDocument(string name, int pageAmount, double width, double height)
         {
             PDFHolder documentClass = new PDFHolder();
 
@@ -81,17 +81,16 @@ namespace PDFCreator
             documents.Clear();
         }
 
-        public void DrawRTFTagString(string name, string RTFtext, int page, string fontFamily, float fontSize, int fontStyle, int alignment, float lineSpace, float paragraphSpace, float pivotX, float pivotY, float percentageSizeX, float percentageSizeY, float percentagePosX, float percentagePosY)
+        public void DrawRTFTagString(string name, string RTFtext, int page, string fontFamily, double fontSize, int fontStyle, int alignment, double lineSpace, double paragraphSpace, double pivotX, double pivotY, double percentageSizeX, double percentageSizeY, double percentagePosX, double percentagePosY)
         {
-            //XPdfFontOptions options = new XPdfFontOptions(PdfFontEncoding.Unicode);
             XSize pageSize = documents[name].graphicsList[page].PageSize;
-            float posX = percentagePosX * (float)pageSize.Width;
-            float posY = percentagePosY * (float)pageSize.Height;
-            float sizeX = percentageSizeX * (float)pageSize.Width;
-            float sizeY = percentageSizeY * (float)pageSize.Height;
+            double posX = percentagePosX * pageSize.Width;
+            double posY = percentagePosY * pageSize.Height;
+            double sizeX = percentageSizeX * pageSize.Width;
+            double sizeY = percentageSizeY * pageSize.Height;
             
-            float x = SetToPivot(posX, sizeX, pivotX);
-            float y = SetToPivot(posY, sizeY, pivotY);
+            double x = SetToPivot(posX, sizeX, pivotX);
+            double y = SetToPivot(posY, sizeY, pivotY);
 
             XFont font = new XFont(fontFamily, fontSize, (XFontStyle)fontStyle);
             XRect rect = new XRect(x, y, sizeX, sizeY);
@@ -103,19 +102,19 @@ namespace PDFCreator
                   spacingoptions,
                   XStringFormats.TopLeft);
         }
-        public void DrawImage(string name, string path, int page, float pivotX, float pivotY, float percentageSizeX, float percentageSizeY, float percentagePosX, float percentagePosY)
+        public void DrawImage(string name, string path, int page, double pivotX, double pivotY, double percentageSizeX, double percentageSizeY, double percentagePosX, double percentagePosY)
         {
             XSize pageSize = documents[name].graphicsList[page].PageSize;
-            float posX = percentagePosX * (float)pageSize.Width;
-            float posY = percentagePosY * (float)pageSize.Height;
-            float sizeX = percentageSizeX * (float)pageSize.Width;
-            float sizeY = percentageSizeY * (float)pageSize.Height;
-            float x = SetToPivot(posX, sizeX, pivotX);
-            float y = SetToPivot(posY, sizeY, pivotY);
+            double posX = percentagePosX * pageSize.Width;
+            double posY = percentagePosY * pageSize.Height;
+            double sizeX = percentageSizeX * pageSize.Width;
+            double sizeY = percentageSizeY * pageSize.Height;
+            double x = SetToPivot(posX, sizeX, pivotX);
+            double y = SetToPivot(posY, sizeY, pivotY);
             XImage image = XImage.FromFile(path);
 
-            var ratioX = (double)sizeX / image.PixelWidth;
-            var ratioY = (double)sizeY / image.PixelHeight;
+            var ratioX = sizeX / image.PixelWidth;
+            var ratioY = sizeY / image.PixelHeight;
             var ratio = Math.Min(ratioX, ratioY);
 
             var newWidth = image.PixelWidth * ratio;
@@ -142,7 +141,7 @@ namespace PDFCreator
              
         }
 
-        private float SetToPivot(float pos, float size, float pivot)
+        private double SetToPivot(double pos, double size, double pivot)
         {
             //top left is 0,0. bottom right is 1,1
             return pos - (size * pivot);

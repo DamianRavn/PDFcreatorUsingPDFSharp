@@ -149,6 +149,11 @@ namespace PDFCreator
         {
             buffer.AddRange(BitConverter.GetBytes(_value));
         }
+
+        public void Write(double _value)
+        {
+            buffer.AddRange(BitConverter.GetBytes(_value));
+        }
         /// <summary>Adds a bool to the packet.</summary>
         /// <param name="_value">The bool to add.</param>
         public void Write(bool _value)
@@ -289,6 +294,25 @@ namespace PDFCreator
             else
             {
                 throw new Exception("Could not read value of type 'float'!");
+            }
+        }
+
+        public double ReadDouble(bool _moveReadPos = true)
+        {
+            if (buffer.Count > readPos)
+            {
+                // If there are unread bytes
+                double _value = BitConverter.ToDouble(readableBuffer, readPos);
+                if (_moveReadPos)
+                {
+                    // If _moveReadPos is true
+                    readPos += 8; // Increase readPos by 8
+                }
+                return _value; // Return the double
+            }
+            else
+            {
+                throw new Exception("Could not read value of type 'double'!");
             }
         }
 

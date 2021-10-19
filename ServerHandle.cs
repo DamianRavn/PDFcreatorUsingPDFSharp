@@ -22,11 +22,11 @@ namespace PDFCreator
         {
             string name = _packet.ReadString();
             int amountOfPages = _packet.ReadInt();
-            float width = _packet.ReadFloat();
-            float height = _packet.ReadFloat();
+            double width = _packet.ReadDouble();
+            double height = _packet.ReadDouble();
 
             PDFCreator.pdfCreator.CreateDocument(name, amountOfPages, width, height);
-            Console.WriteLine($"{name} Page received! Amount of pages: {amountOfPages}, Width: {width}, Height: {height}");
+            //Console.WriteLine($"{name} Page received! Amount of pages: {amountOfPages}, Width: {width}, Height: {height}");
         }
 
         public static void ImageReceived(int _fromClient, Packet _packet)
@@ -34,16 +34,15 @@ namespace PDFCreator
             string documentName = _packet.ReadString();
             string path = _packet.ReadString();
             int pageNR = _packet.ReadInt();
-            float pivotX = _packet.ReadFloat();
-            float pivotY = _packet.ReadFloat();
-            float sizeX = _packet.ReadFloat();
-            float sizeY = _packet.ReadFloat();
-            float posX = _packet.ReadFloat();
-            float posY = _packet.ReadFloat();
+            double pivotX = _packet.ReadDouble();
+            double pivotY = _packet.ReadDouble();
+            double sizeX = _packet.ReadDouble();
+            double sizeY = _packet.ReadDouble();
+            double posX = _packet.ReadDouble();
+            double posY = _packet.ReadDouble();
 
-            Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
             PDFCreator.pdfCreator.DrawImage(documentName, path, pageNR, pivotX, pivotY, sizeX, sizeY, posX, posY);
-            Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
+            //Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
         public static void RTFTextWithTagsReceived(int _fromClient, Packet _packet)
@@ -52,20 +51,20 @@ namespace PDFCreator
             string RTFtext = _packet.ReadString();
             int pageNR = _packet.ReadInt();
             string fontFamily = _packet.ReadString();
-            float fontSize = _packet.ReadFloat();
+            double fontSize = _packet.ReadDouble();
             int fontStyle = _packet.ReadInt(); //Has to align with XFontStyle
             int alignment = _packet.ReadInt(); //Has to align with XParagraphAlignment
-            float lineSpace = _packet.ReadFloat();
-            float paragraphSpace = _packet.ReadFloat();
-            float pivotX = _packet.ReadFloat();
-            float pivotY = _packet.ReadFloat();
-            float sizeX = _packet.ReadFloat();
-            float sizeY = _packet.ReadFloat();
-            float posX = _packet.ReadFloat();
-            float posY = _packet.ReadFloat();
+            double lineSpace = _packet.ReadDouble();
+            double paragraphSpace = _packet.ReadDouble();
+            double pivotX = _packet.ReadDouble();
+            double pivotY = _packet.ReadDouble();
+            double sizeX = _packet.ReadDouble();
+            double sizeY = _packet.ReadDouble();
+            double posX = _packet.ReadDouble();
+            double posY = _packet.ReadDouble();
 
             PDFCreator.pdfCreator.DrawRTFTagString(documentName, RTFtext, pageNR, fontFamily, fontSize, fontStyle, alignment, lineSpace, paragraphSpace, pivotX, pivotY, sizeX, sizeY, posX, posY);
-            Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
+            //Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
         public static void SaveDocument(int _fromClient, Packet _packet)

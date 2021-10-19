@@ -64,3 +64,6 @@ D:\Projects\PDFcreatorC#\obj\Debug\PDFCreator.csproj.CoreCompileInputs.cache
 D:\Projects\PDFcreatorC#\obj\Debug\PDFCreator.csproj.CopyComplete
 D:\Projects\PDFcreatorC#\obj\Debug\PDFCreator.exe
 D:\Projects\PDFcreatorC#\obj\Debug\PDFCreator.pdb
+D:\Projects\PDFcreatorC#\bin\Debug\HtmlAgilityPack.dll
+D:\Projects\PDFcreatorC#\bin\Debug\HtmlAgilityPack.pdb
+D:\Projects\PDFcreatorC#\bin\Debug\HtmlAgilityPack.xml
