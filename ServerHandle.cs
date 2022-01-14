@@ -26,7 +26,7 @@ namespace PDFCreator
             double height = _packet.ReadDouble();
 
             PDFCreator.pdfCreator.CreateDocument(name, amountOfPages, width, height);
-            //Console.WriteLine($"{name} Page received! Amount of pages: {amountOfPages}, Width: {width}, Height: {height}");
+            Console.WriteLine($"{name} Page received! Amount of pages: {amountOfPages}, Width: {width}, Height: {height}");
         }
 
         public static void ImageReceived(int _fromClient, Packet _packet)
@@ -42,7 +42,7 @@ namespace PDFCreator
             double posY = _packet.ReadDouble();
 
             PDFCreator.pdfCreator.DrawImage(documentName, path, pageNR, pivotX, pivotY, sizeX, sizeY, posX, posY);
-            //Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
+            Console.WriteLine($"Image received! Path: {path}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
         public static void RTFTextWithTagsReceived(int _fromClient, Packet _packet)
@@ -64,7 +64,7 @@ namespace PDFCreator
             double posY = _packet.ReadDouble();
 
             PDFCreator.pdfCreator.DrawRTFTagString(documentName, RTFtext, pageNR, fontFamily, fontSize, fontStyle, alignment, lineSpace, paragraphSpace, pivotX, pivotY, sizeX, sizeY, posX, posY);
-            //Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
+            Console.WriteLine($"RTFText received! text: {RTFtext}, Width: {sizeX}, Height: {sizeY}, PositionX: {posX}, PositionY: {posY}");
         }
 
         public static void SaveDocument(int _fromClient, Packet _packet)

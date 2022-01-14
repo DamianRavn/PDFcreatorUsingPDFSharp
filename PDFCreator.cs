@@ -28,7 +28,7 @@ namespace PDFCreator
             //pdfCreator.DrawRTFTagString("e", test, 0, "Calibri", 16, 1, 1, 10, 10, 0, 0, 0.2f, 0.2f, 0.2f, 0.2f);
             Thread mainThread = new Thread(new ThreadStart(MainThread));
             mainThread.Start();
-
+            
             Server.Start(1, 5050);
         }
 
